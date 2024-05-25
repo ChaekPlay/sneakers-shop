@@ -5,7 +5,7 @@ from .views import index, product, search, cart, about
 urlpatterns = [
     path("", index, name="index"),
     path("search", search, name="search"),
-    path("product/<int:productid>/", product, name="product"),
+    path("product/<int:product_id>/", product, name="product"),
     path("cart", cart, name="cart"),
     path("about", about, name="about"),
     # path("checkout/<int:orderid>", checkout, name="checkout"),

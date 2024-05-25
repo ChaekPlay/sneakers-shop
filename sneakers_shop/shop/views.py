@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponse, HttpResponseNotFound, Http404
 
-from shop.models import Product
+from shop.models import *
 
 
 # Create your views here.
@@ -31,6 +31,10 @@ def search(request):
 
 
 def product(request, product_id):
+    try:
+        product_details = Product.objects.get(id=product_id)
+    except Product.DoesNotExist:
+        raise Http404()
     product_details = Product.objects.get(id=product_id)
     context = {
         'title': 'Товар',

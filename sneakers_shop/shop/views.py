@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseNotFound, Http404
 
+from shop.forms import CheckoutForm, EditProfileForm, ReturnForm
 from shop.models import *
 
 
@@ -22,8 +23,20 @@ def about(request):
 
 
 def profile(request):
+    user = User.objects.get(id=request.user.id)
+    if not user.is_authenticated:
+        raise Http404()
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = EditProfileForm()
     context = {
         'title': 'Профиль',
+        'user': user,
+        'form': form,
     }
     return render(request, 'shop/profile.html', context)
 
@@ -71,15 +84,31 @@ def order_status(request):
 
 
 def checkout(request):
+    if request.method == 'POST':
+        form = CheckoutForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('order_status')
+    else:
+        form = CheckoutForm()
     context = {
         'title': 'Оформление заказа',
+        'form': form
     }
     return render(request, 'shop/checkout.html', context)
 
 
 def return_order(request):
+    if request.method == 'POST':
+        form = ReturnForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('return_status')
+    else:
+        form = ReturnForm()
     context = {
         'title': 'Возврат',
+        'form': form,
     }
     return render(request, 'shop/return.html', context)
 

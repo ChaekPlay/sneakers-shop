@@ -10,6 +10,7 @@ DELIVERY_STATUS = [
 ]
 
 RETURN_STATUS = [
+    ('PENDING', 'pending'),
     ('ACCEPT', 'accepted'),
     ('DECLINE', 'declined'),
 ]
@@ -29,12 +30,12 @@ class Product(models.Model):
     description = models.TextField()
     size = models.CharField(max_length=20)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    available_count = models.IntegerField()
+    available_count = models.IntegerField(default=0)
 
 
 class Order(models.Model):
     delivery_date = models.DateTimeField()
-    delivery_status = models.CharField(max_length=4,choices=DELIVERY_STATUS)
+    delivery_status = models.CharField(max_length=4, choices=DELIVERY_STATUS, default='PACK')
     client_id = models.ForeignKey(Client, on_delete=models.DO_NOTHING)
     manager_id = models.ForeignKey(Manager, on_delete=models.DO_NOTHING)
     products = models.ManyToManyField(Product, through="ProductInOrder")
@@ -49,7 +50,7 @@ class ProductInOrder(models.Model):
 class Return(models.Model):
     reason = models.TextField()
     date = models.DateTimeField()
-    status = models.CharField(max_length=7, choices=RETURN_STATUS)
+    status = models.CharField(max_length=7, choices=RETURN_STATUS, default='PENDING')
     client_id = models.OneToOneField(Client, on_delete=models.DO_NOTHING)
     manager_id = models.OneToOneField(Manager, on_delete=models.DO_NOTHING)
     order_id = models.OneToOneField(Order, on_delete=models.DO_NOTHING)

@@ -11,13 +11,34 @@ def index(request):
     context = {
         'title': 'Главная страница',
     }
-    return render(request, 'shop/index.html',context)
+    return render(request, 'shop/index.html', context)
+
 
 def about(request):
     context = {
         'title': 'О сайте',
     }
-    return render(request, 'shop/about.html',context)
+    return render(request, 'shop/about.html', context)
+
+
+def profile(request):
+    context = {
+        'title': 'Профиль',
+    }
+    return render(request, 'shop/profile.html', context)
+
+
+def sign_up(request):
+    context = {
+        'title': 'Регистрация',
+    }
+    return render(request, 'shop/sign_up.html', context)
+
+def sign_in(request):
+    context = {
+        'title': 'Войти',
+    }
+    return render(request, 'shop/sign_in.html', context)
 
 def search(request):
     query = request.GET.get('q')
@@ -35,12 +56,39 @@ def product(request, product_id):
         product_details = Product.objects.get(id=product_id)
     except Product.DoesNotExist:
         raise Http404()
-    product_details = Product.objects.get(id=product_id)
     context = {
         'title': 'Товар',
         'product': product_details,
     }
-    return render(request, 'shop/product.html',context)
+    return render(request, 'shop/product.html', context)
+
+
+def order_status(request):
+    context = {
+        'title': 'Статус заказа',
+    }
+    return render(request, 'shop/order_status.html', context)
+
+
+def checkout(request):
+    context = {
+        'title': 'Оформление заказа',
+    }
+    return render(request, 'shop/checkout.html', context)
+
+
+def return_order(request):
+    context = {
+        'title': 'Возврат',
+    }
+    return render(request, 'shop/return.html', context)
+
+
+def return_status(request):
+    context = {
+        'title': 'Статус возврата',
+    }
+    return render(request, 'shop/return_status.html', context)
 
 
 def cart(request):

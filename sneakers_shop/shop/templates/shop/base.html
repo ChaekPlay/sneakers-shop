@@ -1,25 +1,32 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>{{title}}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Mukta:300,400,700">
+    <link rel="stylesheet" href="{% static 'shop/fonts/icomoon/style.css' %}">
+
+    <link rel="stylesheet" href="{% static 'shop/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'shop/css/magnific-popup.css' %}">
+    <link rel="stylesheet" href="{% static 'shop/css/jquery-ui.css' %}">
+    <link rel="stylesheet" href="{% static 'shop/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'shop/css/owl.theme.default.min.css' %}">
+
+
+    <link rel="stylesheet" href="{% static 'shop/css/aos.css' %}">
+
+    <link rel="stylesheet" href="{% static  'shop/css/style.css' %}">
 </head>
 <body>
 {% block navbar %}
-<nav>
-    <ul>
-        <li><a href="{% url 'index' %}">Главная</a></li>
-        <li><a href="{% url 'cart' %}">Корзина</a></li>
-        <li><a href="{% url 'about' %}">О нас</a></li>
-    </ul>
-</nav>
+
 {% endblock navbar %}
 {% block content %}
 {% endblock %}
 {% block footer %}
-<footer>
-    <p>Иван Смирнов, 2024</p>
-</footer>
+
 {% endblock footer %}
 </body>
 </html>

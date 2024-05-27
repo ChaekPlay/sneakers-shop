@@ -2,4 +2,9 @@
 
 {% block content %}
 <h1>Профиль</h1>
+<div class="profile-card">
+    <p class="username">{{user.firstName}} {{user.lastName}}</p>
+    <p class="email">Email: {{user.email}}</p>
+    <p class="phone">Телефон: {{user.phone}}</p>
+</div>
 {% endblock %}

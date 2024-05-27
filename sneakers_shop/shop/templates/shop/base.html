@@ -35,7 +35,7 @@
             <div class="col-6 col-md-4 order-2 order-md-1 site-search-icon text-left">
               <form action="{% url 'search' %}" class="site-block-top-search" method="get">
                 <span class="icon icon-search2"></span>
-                <input type="text" class="form-control border-0" placeholder="Поиск">
+                <input type="text" name="q" class="form-control border-0" placeholder="Поиск">
               </form>
             </div>
 
@@ -52,7 +52,6 @@
                   <li>
                     <a href="{% url 'cart'%}" class="site-cart">
                       <span class="icon icon-shopping_cart"></span>
-                      <span class="count">2</span>
                     </a>
                   </li>
                   <li class="d-inline-block d-md-none ml-md-0"><a href="#" class="site-menu-toggle js-menu-toggle"><span class="icon-menu"></span></a></li>
@@ -67,7 +66,7 @@
         <div class="container">
           <ul class="site-menu js-clone-nav d-none d-md-block">
             <li><a href="{% url 'index'%}">Главная</a></li>
-            <li><a href="#">О нас</a></li>
+            <li><a href="{% url 'about'%}">О нас</a></li>
             <li><a href="{% url 'search'%}">Каталог</a></li>
             <li><a href="{% url 'orders'%}">Заказы</a></li>
             <li><a href="{% url 'returns'%}">Возвраты</a></li>

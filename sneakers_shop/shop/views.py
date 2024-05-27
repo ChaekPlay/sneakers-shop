@@ -2,9 +2,10 @@ from django.contrib import messages
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import Http404
 from django.urls import reverse_lazy
+from django.views.generic import ListView
 
 from shop.forms import CheckoutForm, EditProfileForm, ReturnForm, EditUserForm, LoginUserForm, RegisterUserForm, \
     CreateClientForm
@@ -65,6 +66,8 @@ def sign_up(request):
             client = client_form.save(commit=False)
             client.user = user
             client.save()
+            user_cart = Cart.objects.create(client_id=user.id)
+            user_cart.save()
             login(request, user)
             return redirect('index')
     else:
@@ -90,6 +93,7 @@ class LoginUser(LoginView):
     def get_success_url(self):
         return reverse_lazy('index')
 
+
 def sign_in(request):
     if request.method == 'POST':
         user = authenticate(request, username=request.POST.get('username'), password=request.POST.get('password'))
@@ -105,18 +109,27 @@ def sign_in(request):
     return render(request, 'shop/sign_in.html', context)
 
 
-def search(request):
-    query = request.GET.get('q')
-    if query is None:
-        products = Product.objects.all()
-    else:
-        products = Product.objects.filter(name__icontains=query)
+class Search(ListView):
+    paginate_by = 1
+    model = Product
+    template_name = 'shop/search.html'
+    context_object_name = 'products'
     context = {
         'title': 'Результаты поиска',
-        'query': query,
-        'products': products,
     }
-    return render(request, 'shop/search.html', context)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        query = self.request.GET.get('q')
+        if query is None:
+            query = ''
+        c_def = {'title': 'Результаты поиска', 'query': query}
+        return dict(list(context.items()) + list(c_def.items()))
+
+    def get_queryset(self):
+        if self.request.GET.get('q') is not None:
+            return Product.objects.filter(name__icontains=self.request.GET.get('q'))
+        return Product.objects.all()
 
 
 def product(request, product_id):
@@ -125,10 +138,10 @@ def product(request, product_id):
     except Product.DoesNotExist:
         raise Http404()
     context = {
-        'title': 'Товар',
+        'title': 'Товар ' + product_details.name,
         'product': product_details,
     }
-    return render(request, 'shop/product.html', context)
+    return render(request, 'shop/product_card.html', context)
 
 
 def thank_you(request):
@@ -136,6 +149,7 @@ def thank_you(request):
         'title': 'Спасибо!',
     }
     return render(request, 'shop/thank_you.html', context)
+
 
 def product_card(request):
     context = {
@@ -196,13 +210,55 @@ def return_status(request):
     return render(request, 'shop/return_status.html', context)
 
 
-#@login_required(login_url='sign_in')
+@login_required(login_url='sign_in')
 def cart(request):
+    cart = Cart.objects.get(client_id=Client.objects.get(user_id=request.user.id).id)
+    result_cart = {}
+    for product in cart.products.select_related():
+        amount = ProductInCart.objects.filter(cart_id=cart.id, product_id=product.id).first().product_count
+        result_cart[product.id] = {
+            'id': product.id,
+            'name': product.name,
+            'price': product.price,
+            'amount': amount,
+            'total_price': product.price * amount,
+            'image': product.image,
+            'size': product.size
+        }
+    total_price = 0
+    for product in result_cart:
+        total_price += result_cart[product]['price'] * result_cart[product]['amount']
     context = {
         'title': 'Корзина',
+        'cart': result_cart,
+        'total_price': total_price
     }
     return render(request, 'shop/cart.html', context)
 
+@login_required(login_url='sign_in')
+def add_to_cart(request, product_id):
+    product_to_add = get_object_or_404(Product, id=product_id)
+    client = Client.objects.get(user_id=request.user.id)
+    cart = Cart.objects.get(client_id=client.id)
+    if not ProductInCart.objects.filter(cart_id=cart.id, product_id=product_id).exists():
+        cart.products.add(product_to_add, through_defaults={'product_count': 1})
+    else:
+        product_count = get_object_or_404(ProductInCart,cart_id=cart.id, product_id=product_id).product_count
+        ProductInCart.objects.filter(cart_id=cart.id, product_id=product_id).update(product_count=product_count + 1)
+    return redirect('cart')
+
+
+@login_required(login_url='sign_in')
+def remove_from_cart(request, product_id):
+    product_to_delete = get_object_or_404(Product, id=product_id)
+    client = Client.objects.get(user_id=request.user.id)
+    cart = Cart.objects.get(client_id=client.id)
+    product_count = ProductInCart.objects.filter(cart_id=cart.id, product_id=product_id).first().product_count
+    if product_count == 1:
+        cart.products.remove(product_to_delete)
+    else:
+        ProductInCart.objects.filter(cart_id=cart.id, product_id=product_id).update(product_count=product_count - 1)
+    return redirect('cart')
 
 def page_not_found(request, exception):
     context = {

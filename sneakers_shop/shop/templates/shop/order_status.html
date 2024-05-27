@@ -1,6 +1,8 @@
 {% extends 'shop/base.html' %}
 
 {% block content %}
-<h1>Статус заказа # {{order.id}}</h1>
-<div class="badge text-bg-primary"></div>
+<h1>Заказы</h1>
+{% for order in orders %}
+<p>Заказ {{ order.id }}</p>
+{% endfor %}
 {% endblock %}

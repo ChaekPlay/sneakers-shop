@@ -4,7 +4,10 @@
 <h1>Регистрация</h1>
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
+    {{ user_form.as_p }}
+    <div class="form-error">{{ form.errors }}</div>
+    {{ client_form.as_p }}
+    <div class="form-error">{{ client_form.errors }}</div>
     <button type="submit" class="btn btn-sm btn-primary">Зарегистрироваться</button>
 </form>
 {% endblock %}

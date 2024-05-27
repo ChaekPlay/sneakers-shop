@@ -1,7 +1,9 @@
+from django.contrib.auth import logout, authenticate, login
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseNotFound, Http404
 
-from shop.forms import CheckoutForm, EditProfileForm, ReturnForm
+from shop.forms import CheckoutForm, EditProfileForm, ReturnForm, EditUserForm, LoginUserForm, RegisterUserForm
 from shop.models import *
 
 
@@ -15,6 +17,11 @@ def index(request):
     return render(request, 'shop/index.html', context)
 
 
+def logout_user(request):
+    logout(request)
+    return redirect('index')
+
+
 def about(request):
     context = {
         'title': 'О сайте',
@@ -22,36 +29,59 @@ def about(request):
     return render(request, 'shop/about.html', context)
 
 
+@login_required(login_url='sign_in')
 def profile(request):
-    user = User.objects.get(id=request.user.id)
-    if not user.is_authenticated:
-        raise Http404()
+    client = Client.objects.get(id=request.user.id)
     if request.method == 'POST':
-        form = EditProfileForm(request.POST)
-        if form.is_valid():
-            form.save()
+        user_form = EditUserForm(request.POST, instance=client.user)
+        client_form = EditProfileForm(request.POST, instance=client)
+        if user_form.is_valid() and client_form.is_valid():
+            user_form.save()
+            client_form.save()
             return redirect('profile')
     else:
-        form = EditProfileForm()
+        user_form = EditUserForm()
+        client_form = EditProfileForm()
     context = {
         'title': 'Профиль',
-        'user': user,
-        'form': form,
+        'client': client,
+        'user_form': user_form,
+        'client_form': client_form,
     }
     return render(request, 'shop/profile.html', context)
 
 
 def sign_up(request):
+    if request.method == 'POST':
+        register_form = RegisterUserForm(request.POST)
+        if register_form.is_valid():
+            user = register_form.save()
+            login(request, user)
+            return redirect('index')
+    else:
+        register_form = RegisterUserForm()
     context = {
         'title': 'Регистрация',
+        'form': register_form
     }
     return render(request, 'shop/sign_up.html', context)
 
+
 def sign_in(request):
+    if request.method == 'POST':
+        login_form = LoginUserForm(request.POST)
+        user = authenticate(request, email=login_form.email, password=login_form.password)
+        if user is not None:
+            login(request, user)
+            return redirect('index')
+    else:
+        login_form = LoginUserForm()
     context = {
         'title': 'Войти',
+        'form': login_form
     }
     return render(request, 'shop/sign_in.html', context)
+
 
 def search(request):
     query = request.GET.get('q')
@@ -76,13 +106,19 @@ def product(request, product_id):
     return render(request, 'shop/product.html', context)
 
 
-def order_status(request):
+@login_required(login_url='sign_in')
+def order_status(request, orderid):
+    order = Order.objects.get(id=orderid)
+    if request.user.id != order.client.id:
+        return redirect('index')
     context = {
         'title': 'Статус заказа',
+        'order': order
     }
     return render(request, 'shop/order_status.html', context)
 
 
+@login_required(login_url='sign_in')
 def checkout(request):
     if request.method == 'POST':
         form = CheckoutForm(request.POST)
@@ -98,6 +134,7 @@ def checkout(request):
     return render(request, 'shop/checkout.html', context)
 
 
+@login_required(login_url='sign_in')
 def return_order(request):
     if request.method == 'POST':
         form = ReturnForm(request.POST)
@@ -113,6 +150,7 @@ def return_order(request):
     return render(request, 'shop/return.html', context)
 
 
+@login_required(login_url='sign_in')
 def return_status(request):
     context = {
         'title': 'Статус возврата',
@@ -120,6 +158,7 @@ def return_status(request):
     return render(request, 'shop/return_status.html', context)
 
 
+@login_required(login_url='sign_in')
 def cart(request):
     context = {
         'title': 'Корзина',

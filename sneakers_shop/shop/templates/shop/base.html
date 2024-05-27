@@ -18,6 +18,10 @@
     <link rel="stylesheet" href="{% static 'shop/css/aos.css' %}">
 
     <link rel="stylesheet" href="{% static  'shop/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'shop/css/custom.css' %}">
+  {% block extracss %}
+
+  {% endblock %}
 </head>
 <body>
 {% block navbar %}
@@ -97,7 +101,7 @@
 {% block footer %}
     <footer class="site-footer border-top">
       <div class="container">
-        <div class="row">
+        <div class="row justify-content-between">
           <div class="col-lg-6 mb-5 mb-lg-0">
             <div class="row">
               <div class="col-md-12">

@@ -1,0 +1,29 @@
+body {
+    margin: 0 auto;
+    max-width: 1200px;
+}
+.profile-card {
+    border: 1px solid var(--primary);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1rem;
+    align-items: flex-start;
+}
+h5, p {
+display: inline;
+}
+.edit-profile {
+    display: flex;
+    flex-direction: column;
+
+}
+.edit-profile label {
+    width: 200px;
+}
+.edit-profile input {
+    width: 50%;
+}
+button {
+    align-self: start;
+}

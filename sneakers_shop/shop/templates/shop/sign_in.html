@@ -1,5 +1,13 @@
 {% extends 'shop/base.html' %}
-
+{% load static %}
+{% block extracss %}
+<link rel="stylesheet" href="{% static 'shop/css/sign_in.css' %}">
+{% endblock %}
 {% block content %}
 <h1>Войти</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-sm btn-primary">Войти</button>
+</form>
 {% endblock %}

@@ -19,10 +19,12 @@ RETURN_STATUS = [
 # Create your models here.
 class Client(models.Model):
     user = OneToOneField(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=20)
 
 
 class Manager(models.Model):
     user = OneToOneField(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=20)
 
 
 class Product(models.Model):
@@ -32,6 +34,9 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     available_count = models.IntegerField(default=0)
 
+class Cart(models.Model):
+    client_id = models.ForeignKey(Client, on_delete=models.DO_NOTHING)
+    products = models.ManyToManyField(Product, through="ProductInCart")
 
 class Order(models.Model):
     delivery_date = models.DateTimeField()
@@ -40,6 +45,10 @@ class Order(models.Model):
     manager_id = models.ForeignKey(Manager, on_delete=models.DO_NOTHING)
     products = models.ManyToManyField(Product, through="ProductInOrder")
 
+
+class ProductInCart(models.Model):
+    cart_id = models.ForeignKey(Cart, on_delete=models.DO_NOTHING)
+    product_id = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
 
 class ProductInOrder(models.Model):
     order_id = models.ForeignKey(Order, on_delete=models.DO_NOTHING)

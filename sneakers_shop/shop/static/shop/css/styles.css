@@ -3,6 +3,7 @@
 @import url(./aos.css.css);
 @import url(./navbar.css);
 @import url(./social.css);
+@import url(./profile.css);
 
 .view {
     min-height: 75vh;

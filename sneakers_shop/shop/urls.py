@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .views import index, product, search, cart, about, checkout, order_status, profile, return_order, return_status, \
-    sign_up, sign_in
+    sign_up, sign_in, logout_user
 
 urlpatterns = [
     path("", index, name="index"),
@@ -16,4 +16,5 @@ urlpatterns = [
     path("return/create", return_order, name="create_return"),
     path("signup", sign_up, name="sign_up"),
     path("signin", sign_in, name="sign_in"),
+    path('logout/', logout_user, name='logout'),
 ]

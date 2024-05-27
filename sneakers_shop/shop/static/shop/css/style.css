@@ -21,7 +21,9 @@ a {
     text-decoration: none; }
 
 .text-black {
-  color: #000; }
+  color: var(--text-dark); }
+
+
 
 .site-wrap:before {
   -webkit-transition: .3s all ease-in-out;

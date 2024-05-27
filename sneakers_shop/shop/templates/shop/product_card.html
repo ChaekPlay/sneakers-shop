@@ -1,0 +1,55 @@
+{% extends 'shop/base.html' %}
+{% load static %}
+{% block content %}
+<div class="bg-light py-3">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 mb-0"><a href="{% url 'index' %}">Главная</a> <span class="mx-2 mb-0">/</span> <strong class="text-black">Кроссовки мужские Pulse</strong></div>
+        </div>
+      </div>
+    </div>  
+
+    <div class="site-section">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <img src="{% static 'shop/images/Sneakers1.jpg' %}" alt="Image" class="img-fluid">
+          </div>
+          <div class="col-md-6">
+            <h2 class="text-black">Кроссовки мужские Pulse</h2>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Pariatur, vitae, explicabo? Incidunt facere, natus soluta dolores iusto! Molestiae expedita veritatis nesciunt doloremque sint asperiores fuga voluptas, distinctio, aperiam, ratione dolore.</p>
+            <p class="mb-4">Ex numquam veritatis debitis minima quo error quam eos dolorum quidem perferendis. Quos repellat dignissimos minus, eveniet nam voluptatibus molestias omnis reiciendis perspiciatis illum hic magni iste, velit aperiam quis.</p>
+            <p><strong class="text-primary h4">4000</strong></p>
+            <div class="mb-1 d-flex">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" id="dropdownMenuReference" data-toggle="dropdown"> Размер</button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuReference">
+                      <a class="dropdown-item" href="#">36</a>
+                      <a class="dropdown-item" href="#">37</a>
+                      <a class="dropdown-item" href="#">38</a>
+                      <a class="dropdown-item" href="#">39</a>
+                      <a class="dropdown-item" href="#">40</a>
+                    </div>
+                  </div>
+            </div>
+            <div class="mb-5">
+              <div class="input-group mb-3" style="max-width: 120px;">
+              <div class="input-group-prepend">
+                <button class="btn btn-outline-primary js-btn-minus" type="button">&minus;</button>
+              </div>
+              <input type="text" class="form-control text-center" value="1" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+              <div class="input-group-append">
+                <button class="btn btn-outline-primary js-btn-plus" type="button">&plus;</button>
+              </div>
+            </div>
+            <p><a href="{% url 'cart' %}" class="buy-now btn btn-sm btn-primary">Добавить в корзину</a></p>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+{% endblock %}

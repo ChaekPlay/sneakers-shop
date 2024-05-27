@@ -131,6 +131,19 @@ def product(request, product_id):
     return render(request, 'shop/product.html', context)
 
 
+def thank_you(request):
+    context = {
+        'title': 'Спасибо!',
+    }
+    return render(request, 'shop/thank_you.html', context)
+
+def product_card(request):
+    context = {
+        'title': 'Товар',
+    }
+    return render(request, 'shop/product_card.html', context)
+
+
 @login_required(login_url='sign_in')
 def order_status(request):
     user = User.objects.get(id=request.user.id)

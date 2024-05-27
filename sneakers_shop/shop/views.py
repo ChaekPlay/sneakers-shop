@@ -118,7 +118,7 @@ def order_status(request, orderid):
     return render(request, 'shop/order_status.html', context)
 
 
-@login_required(login_url='sign_in')
+#"@login_required(login_url='sign_in')
 def checkout(request):
     if request.method == 'POST':
         form = CheckoutForm(request.POST)
@@ -158,7 +158,7 @@ def return_status(request):
     return render(request, 'shop/return_status.html', context)
 
 
-@login_required(login_url='sign_in')
+#@login_required(login_url='sign_in')
 def cart(request):
     context = {
         'title': 'Корзина',

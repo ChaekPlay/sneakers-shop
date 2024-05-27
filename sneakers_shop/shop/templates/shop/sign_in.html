@@ -10,4 +10,6 @@
     {{ form.as_p }}
     <button type="submit" class="btn btn-sm btn-primary">Войти</button>
 </form>
+<p class="text-center text-muted mt-5 mb-0">Нет аккаунта?<a href="{% url 'sign_up' %}"
+                                                             class="fw-bold text-body"><u> Зарегистрироваться</u></a></p>
 {% endblock %}

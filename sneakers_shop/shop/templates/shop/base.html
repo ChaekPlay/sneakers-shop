@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+  <title>{{ title }}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -90,7 +91,8 @@
               </ul>
             </li>
             <li><a href="{% url 'search'%}">Каталог</a></li>
-            <li><a href="#">Заказы</a></li>
+            <li><a href="{% url 'orders'%}">Заказы</a></li>
+            <li><a href="{% url 'returns'%}">Возвраты</a></li>
           </ul>
         </div>
       </nav>

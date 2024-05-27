@@ -5,6 +5,12 @@ from .models import *
 
 
 class RegisterUserForm(UserCreationForm):
+    username = forms.CharField(
+        max_length=100,
+        required=True,
+        help_text='Имя пользователя',
+        widget=forms.TextInput(attrs={'class': 'form-control form-control-lg', 'placeholder': 'Имя пользователя'}),
+    )
     first_name = forms.CharField(
         max_length=100,
         required=True,
@@ -37,25 +43,31 @@ class RegisterUserForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'username', 'email', 'password1', 'password2')
+        fields = ('username', 'email', 'first_name', 'last_name', 'password1', 'password2')
+
+
+class CreateClientForm(forms.ModelForm):
+    phone = forms.CharField(max_length=20,
+                             required=True,
+                             help_text='Номер телефона',
+                             widget=forms.TextInput(attrs={'class': 'form-control form-control-lg', 'placeholder': 'Номер телефона'}))
+    class Meta:
+        model = Client
+        fields = ['phone']
 
 
 class LoginUserForm(AuthenticationForm):
-    email = forms.EmailField(
-        max_length=200,
+    username = forms.CharField(
+        max_length=100,
         required=True,
-        help_text='Эл. почта',
-        widget=forms.EmailInput(attrs={'class': 'form-control form-control-lg', 'placeholder': 'example@example.com'}),
+        help_text='Имя пользователя',
+        widget=forms.TextInput(attrs={'class': 'form-control form-control-lg', 'placeholder': 'Имя пользователя'}),
     )
     password = forms.CharField(
         help_text='Пароль',
         required=True,
         widget=forms.PasswordInput(attrs={'class': 'form-control form-control-lg', 'placeholder': 'Пароль'}),
     )
-
-    class Meta:
-        model = User
-        fields = ('email', 'password')
 
 
 class EditUserForm(forms.ModelForm):

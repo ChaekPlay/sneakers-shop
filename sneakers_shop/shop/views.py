@@ -1,9 +1,13 @@
+from django.contrib import messages
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, HttpResponseNotFound, Http404
+from django.http import Http404
+from django.urls import reverse_lazy
 
-from shop.forms import CheckoutForm, EditProfileForm, ReturnForm, EditUserForm, LoginUserForm, RegisterUserForm
+from shop.forms import CheckoutForm, EditProfileForm, ReturnForm, EditUserForm, LoginUserForm, RegisterUserForm, \
+    CreateClientForm
 from shop.models import *
 
 
@@ -31,7 +35,8 @@ def about(request):
 
 @login_required(login_url='sign_in')
 def profile(request):
-    client = Client.objects.get(id=request.user.id)
+    user = User.objects.get(id=request.user.id)
+    client = Client.objects.get(user_id=user.id)
     if request.method == 'POST':
         user_form = EditUserForm(request.POST, instance=client.user)
         client_form = EditProfileForm(request.POST, instance=client)
@@ -54,23 +59,40 @@ def profile(request):
 def sign_up(request):
     if request.method == 'POST':
         register_form = RegisterUserForm(request.POST)
-        if register_form.is_valid():
+        client_form = CreateClientForm(request.POST)
+        if register_form.is_valid() and client_form.is_valid():
             user = register_form.save()
+            client = client_form.save(commit=False)
+            client.user = user
+            client.save()
             login(request, user)
             return redirect('index')
     else:
         register_form = RegisterUserForm()
+        client_form = CreateClientForm()
     context = {
         'title': 'Регистрация',
-        'form': register_form
+        'user_form': register_form,
+        'client_form': client_form
     }
     return render(request, 'shop/sign_up.html', context)
 
 
+class LoginUser(LoginView):
+    form_class = LoginUserForm
+    template_name = 'shop/sign_in.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def = {'title': 'Войти'}
+        return dict(list(context.items()) + list(c_def.items()))
+
+    def get_success_url(self):
+        return reverse_lazy('index')
+
 def sign_in(request):
     if request.method == 'POST':
-        login_form = LoginUserForm(request.POST)
-        user = authenticate(request, email=login_form.email, password=login_form.password)
+        user = authenticate(request, username=request.POST.get('username'), password=request.POST.get('password'))
         if user is not None:
             login(request, user)
             return redirect('index')
@@ -85,7 +107,10 @@ def sign_in(request):
 
 def search(request):
     query = request.GET.get('q')
-    products = Product.objects.filter(name__icontains=query)
+    if query is None:
+        products = Product.objects.all()
+    else:
+        products = Product.objects.filter(name__icontains=query)
     context = {
         'title': 'Результаты поиска',
         'query': query,
@@ -107,13 +132,13 @@ def product(request, product_id):
 
 
 @login_required(login_url='sign_in')
-def order_status(request, orderid):
-    order = Order.objects.get(id=orderid)
-    if request.user.id != order.client.id:
-        return redirect('index')
+def order_status(request):
+    user = User.objects.get(id=request.user.id)
+    client = Client.objects.get(user_id=user.id)
+    orders = Order.objects.filter(client_id=client.id)
     context = {
         'title': 'Статус заказа',
-        'order': order
+        'orders': orders
     }
     return render(request, 'shop/order_status.html', context)
 

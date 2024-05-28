@@ -8,53 +8,16 @@
         </div>
       </div>
     </div>
-
+<form action="{% url 'checkout' %}" method="post">
     <div class="site-section">
       <div class="container">
         <div class="row">
           <div class="col-md-6 mb-5 mb-md-0">
             <h2 class="h3 mb-3 text-black">Детали</h2>
             <div class="p-3 p-lg-5 border">
-              <div class="form-group">
-                <label for="c_country" class="text-black">Страна <span class="text-danger">*</span></label>
-                <select id="c_country" class="form-control">
-                  <option value="1">Выберите страну</option>
-                  <option value="2">Россия</option>
-                </select>
-              </div>
               <div class="form-group row">
-                <div class="col-md-6">
-                  <label for="c_fname" class="text-black">Имя <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="c_fname" name="c_fname">
-                </div>
-                <div class="col-md-6">
-                  <label for="c_lname" class="text-black"> Фамилия <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="c_lname" name="c_lname">
-                </div>
-              </div>
-
-              <div class="form-group row">
-                <div class="col-md-12">
-                  <label for="c_address" class="text-black">Адрес <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="c_address" name="c_address" placeholder="Адрес">
-                </div>
-              </div>
-
-              <div class="form-group row mb-5">
-                <div class="col-md-6">
-                  <label for="c_email_address" class="text-black">Email <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="c_email_address" name="c_email_address">
-                </div>
-                <div class="col-md-6">
-                  <label for="c_phone" class="text-black">Номер телефона <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="c_phone" name="c_phone" >
-                </div>
-              </div>
-
-
-              <div class="form-group">
-                <label for="c_order_notes" class="text-black">Пожелания к заказу</label>
-                <textarea name="c_order_notes" id="c_order_notes" cols="30" rows="5" class="form-control" placeholder="Напишите ваши пожелания..."></textarea>
+                {% csrf_token %}
+                {{ form.as_p }}
               </div>
 
             </div>
@@ -88,19 +51,21 @@
                       <th>Сумма</th>
                     </thead>
                     <tbody>
+                    {% for id, item in cart.items %}
                       <tr>
-                        <td>Кроссовки мужские Pulse <strong class="mx-2">x</strong> 1</td>
-                        <td>3000 RUB</td>
+                        <td>{{item.name}} <strong class="mx-2">x</strong> {{item.amount}}</td>
+                        <td>{{item.total_price}} RUB</td>
                       </tr>
+                    {% endfor %}
                       <tr>
                         <td class="text-black font-weight-bold"><strong>Общая сумма</strong></td>
-                        <td class="text-black font-weight-bold"><strong>3000 RUB</strong></td>
+                        <td class="text-black font-weight-bold"><strong>{{total_price}} RUB</strong></td>
                       </tr>
                     </tbody>
                   </table>
 
                   <div class="form-group">
-                    <button class="btn btn-primary btn-lg py-3 btn-block" onclick="window.location='{% url 'thank_you' %}'">Оформить заказ</button>
+                    <button class="btn btn-primary btn-lg py-3 btn-block" type="submit">Оформить заказ</button>
                   </div>
 
                 </div>
@@ -109,7 +74,7 @@
 
           </div>
         </div>
-        <!-- </form> -->
       </div>
     </div>
+</form>
 {% endblock %}

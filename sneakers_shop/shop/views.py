@@ -66,7 +66,7 @@ def sign_up(request):
             client = client_form.save(commit=False)
             client.user = user
             client.save()
-            user_cart = Cart.objects.create(client_id=user.id)
+            user_cart = Cart.objects.create(client=client)
             user_cart.save()
             login(request, user)
             return redirect('index')
@@ -92,21 +92,6 @@ class LoginUser(LoginView):
 
     def get_success_url(self):
         return reverse_lazy('index')
-
-
-def sign_in(request):
-    if request.method == 'POST':
-        user = authenticate(request, username=request.POST.get('username'), password=request.POST.get('password'))
-        if user is not None:
-            login(request, user)
-            return redirect('index')
-    else:
-        login_form = LoginUserForm()
-    context = {
-        'title': 'Войти',
-        'form': login_form
-    }
-    return render(request, 'shop/sign_in.html', context)
 
 
 class Search(ListView):
@@ -163,25 +148,83 @@ def order_status(request):
     user = User.objects.get(id=request.user.id)
     client = Client.objects.get(user_id=user.id)
     orders = Order.objects.filter(client_id=client.id)
+    order_set = {}
+    for order in orders:
+        manager = Manager.objects.get(id=order.manager_id)
+        manager_str = manager.user.first_name + ' ' + manager.user.last_name + ', Телефон: ' + manager.phone
+        order_set[order.id] = {'items': get_order_items(order), 'manager': manager_str, 'date': order.delivery_date, 'status': get_delivery_status(order.delivery_status)}
     context = {
         'title': 'Статус заказа',
-        'orders': orders
+        'orders': order_set,
     }
     return render(request, 'shop/order_status.html', context)
+@login_required(login_url='sign_in')
+def accept_order(request, order_id):
+    order = Order.objects.get(id=order_id)
+    order.delivery_status = DELIVERY_STATUS[2][0]
+    order.save()
+    return redirect('orders')
+
+@login_required(login_url='sign_in')
+def cancel_order(request, order_id):
+    order = Order.objects.get(id=order_id)
+    order.delivery_status = DELIVERY_STATUS[3][0]
+    order.save()
+    return redirect('orders')
+
+def get_delivery_status(status):
+    if status == 'PACK':
+        return 'Собирается'
+    elif status == 'OTW':
+        return 'В пути'
+    elif status == 'DELD':
+        return 'Доставлен'
+    elif status == 'CANC':
+        return 'Отменен'
+def get_order_items(order):
+    result_order = {}
+    for product in order.products.select_related():
+        amount = ProductInOrder.objects.filter(order_id=order.id, product_id=product.id).first().product_count
+        result_order[product.id] = {
+            'id': product.id,
+            'name': product.name,
+            'price': product.price,
+            'amount': amount,
+            'total_price': product.price * amount,
+            'image': product.image,
+            'size': product.size
+        }
+    return result_order
 
 
-#"@login_required(login_url='sign_in')
+def get_random_manager():
+    return Manager.objects.all().order_by('?').first()
+
+
+@login_required(login_url='sign_in')
 def checkout(request):
     if request.method == 'POST':
         form = CheckoutForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('order_status')
+            manager_id = get_random_manager().id
+            order = Order.objects.create(client_id=Client.objects.get(user_id=request.user.id).id,
+                                         delivery_date=form.cleaned_data['delivery_date'], delivery_status='PACK',
+                                         delivery_address=form.cleaned_data['delivery_address'], manager_id=manager_id)
+            cart = Cart.objects.get(client_id=Client.objects.get(user_id=request.user.id).id)
+            for product_in_cart in cart.product_in_cart_fields.all():
+                ProductInOrder.objects.create(order_id=order.id, product_id=product_in_cart.product_id,
+                                              product_count=product_in_cart.product_count)
+            cart.products.clear()
+            return redirect('thank_you')
     else:
         form = CheckoutForm()
+    result_cart = get_cart(request)
+    total_price = get_total_price(result_cart)
     context = {
         'title': 'Оформление заказа',
-        'form': form
+        'form': form,
+        'cart': result_cart,
+        'total_price': total_price
     }
     return render(request, 'shop/checkout.html', context)
 
@@ -212,6 +255,18 @@ def return_status(request):
 
 @login_required(login_url='sign_in')
 def cart(request):
+    result_cart = get_cart(request)
+    total_price = get_total_price(result_cart)
+    context = {
+        'title': 'Корзина',
+        'cart': result_cart,
+        'total_price': total_price,
+        'is_empty': len(result_cart) == 0
+    }
+    return render(request, 'shop/cart.html', context)
+
+
+def get_cart(request):
     cart = Cart.objects.get(client_id=Client.objects.get(user_id=request.user.id).id)
     result_cart = {}
     for product in cart.products.select_related():
@@ -225,15 +280,15 @@ def cart(request):
             'image': product.image,
             'size': product.size
         }
+    return result_cart
+
+
+def get_total_price(cart):
     total_price = 0
-    for product in result_cart:
-        total_price += result_cart[product]['price'] * result_cart[product]['amount']
-    context = {
-        'title': 'Корзина',
-        'cart': result_cart,
-        'total_price': total_price
-    }
-    return render(request, 'shop/cart.html', context)
+    for product in cart:
+        total_price += cart[product]['price'] * cart[product]['amount']
+    return total_price
+
 
 @login_required(login_url='sign_in')
 def add_to_cart(request, product_id):
@@ -243,7 +298,7 @@ def add_to_cart(request, product_id):
     if not ProductInCart.objects.filter(cart_id=cart.id, product_id=product_id).exists():
         cart.products.add(product_to_add, through_defaults={'product_count': 1})
     else:
-        product_count = get_object_or_404(ProductInCart,cart_id=cart.id, product_id=product_id).product_count
+        product_count = get_object_or_404(ProductInCart, cart_id=cart.id, product_id=product_id).product_count
         ProductInCart.objects.filter(cart_id=cart.id, product_id=product_id).update(product_count=product_count + 1)
     return redirect('cart')
 
@@ -259,6 +314,7 @@ def remove_from_cart(request, product_id):
     else:
         ProductInCart.objects.filter(cart_id=cart.id, product_id=product_id).update(product_count=product_count - 1)
     return redirect('cart')
+
 
 def page_not_found(request, exception):
     context = {

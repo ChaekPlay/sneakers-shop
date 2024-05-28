@@ -83,9 +83,19 @@ class EditProfileForm(forms.ModelForm):
 
 
 class CheckoutForm(forms.ModelForm):
+    delivery_date = forms.DateField(
+        help_text='Дата доставки',
+        required=True,
+        widget=forms.DateTimeInput(attrs={'class': 'form-control form-control-lg', 'placeholder': '01.01.2000'}),
+    )
+    delivery_address = forms.CharField(
+        help_text='Адрес доставки',
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control form-control-lg', 'placeholder': 'Адрес доставки'}),
+    )
     class Meta:
         model = Order
-        fields = ['delivery_date']
+        fields = ['delivery_date', 'delivery_address']
 
 
 class ReturnForm(forms.ModelForm):

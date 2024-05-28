@@ -46,7 +46,7 @@ class Product(models.Model):
 
 
 class Cart(models.Model):
-    client_id = models.ForeignKey(Client, on_delete=models.DO_NOTHING)
+    client = models.ForeignKey(Client, on_delete=models.DO_NOTHING)
     products = models.ManyToManyField(Product, through="ProductInCart", blank=True, related_name='products_in_cart')
 
     def __str__(self):
@@ -56,8 +56,9 @@ class Cart(models.Model):
 class Order(models.Model):
     delivery_date = models.DateTimeField()
     delivery_status = models.CharField(max_length=4, choices=DELIVERY_STATUS, default='PACK')
-    client_id = models.ForeignKey(Client, on_delete=models.DO_NOTHING)
-    manager_id = models.ForeignKey(Manager, on_delete=models.DO_NOTHING)
+    delivery_address = models.CharField(max_length=255)
+    client = models.ForeignKey(Client, on_delete=models.DO_NOTHING)
+    manager = models.ForeignKey(Manager, on_delete=models.DO_NOTHING)
     products = models.ManyToManyField(Product, through="ProductInOrder", related_name='products_in_order')
 
     def __str__(self):
@@ -65,14 +66,14 @@ class Order(models.Model):
 
 
 class ProductInCart(models.Model):
-    cart_id = models.ForeignKey(Cart, on_delete=models.DO_NOTHING, related_name='product_in_cart_fields')
-    product_id = models.ForeignKey(Product, on_delete=models.DO_NOTHING, related_name='product_in_cart_fields')
+    cart = models.ForeignKey(Cart, on_delete=models.DO_NOTHING, related_name='product_in_cart_fields')
+    product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, related_name='product_in_cart_fields')
     product_count = models.IntegerField()
 
 
 class ProductInOrder(models.Model):
-    order_id = models.ForeignKey(Order, on_delete=models.DO_NOTHING)
-    product_id = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
+    order = models.ForeignKey(Order, on_delete=models.DO_NOTHING)
+    product = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
     product_count = models.IntegerField()
 
 
@@ -80,10 +81,10 @@ class Return(models.Model):
     reason = models.TextField()
     date = models.DateTimeField()
     status = models.CharField(max_length=7, choices=RETURN_STATUS, default='PENDING')
-    client_id = models.OneToOneField(Client, on_delete=models.DO_NOTHING)
-    manager_id = models.OneToOneField(Manager, on_delete=models.DO_NOTHING)
-    order_id = models.OneToOneField(Order, on_delete=models.DO_NOTHING)
-    product_id = models.OneToOneField(Product, on_delete=models.DO_NOTHING)
+    client = models.OneToOneField(Client, on_delete=models.DO_NOTHING)
+    manager = models.OneToOneField(Manager, on_delete=models.DO_NOTHING)
+    order = models.OneToOneField(Order, on_delete=models.DO_NOTHING)
+    product = models.OneToOneField(Product, on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return f'Возврат №{self.pk}'

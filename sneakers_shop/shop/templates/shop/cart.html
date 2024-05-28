@@ -69,7 +69,7 @@
                 <input type="text" class="form-control py-3" id="coupon" placeholder="Код купона">
               </div>
               <div class="col-md-4">
-                <button class="btn btn-primary btn-sm">Подвердить</button>
+                <button class="btn btn-primary btn-sm">Подтвердить</button>
               </div>
             </div>
           </div>
@@ -97,10 +97,9 @@
                     <strong class="text-black">{{total_price}} RUB</strong>
                   </div>
                 </div>
-
                 <div class="row">
                   <div class="col-md-12">
-                    <button class="btn btn-primary btn-lg py-3 btn-block" onclick="window.location='{% url 'checkout' %}'">Оформить заказ</button>
+                    <button class="btn btn-primary btn-lg py-3 btn-block" {% if is_empty %} disabled {% endif %} onclick="window.location='{% url 'checkout' %}'">Оформить заказ</button>
                   </div>
                 </div>
               </div>

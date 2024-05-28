@@ -1,7 +1,7 @@
 from django.urls import path
 
 from .views import index, product, Search, cart, about, checkout, order_status, profile, return_order, return_status, \
-    sign_up, sign_in, logout_user, LoginUser, thank_you, product_card, add_to_cart, remove_from_cart
+    sign_up, logout_user, LoginUser, thank_you, product_card, add_to_cart, remove_from_cart, accept_order, cancel_order
 
 urlpatterns = [
     path("", index, name="index"),
@@ -14,6 +14,8 @@ urlpatterns = [
     path("checkout", checkout, name="checkout"),
     path("orders", order_status, name="orders"),
     path("profile", profile, name="profile"),
+    path("accept_order/<int:order_id>/", accept_order, name="accept_order"),
+    path("cancel_order/<int:order_id>/", cancel_order, name="cancel_order"),
     path("returns", return_status, name="returns"),
     path("return/create", return_order, name="create_return"),
     path("signup", sign_up, name="sign_up"),

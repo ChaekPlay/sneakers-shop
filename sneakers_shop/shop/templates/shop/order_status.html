@@ -29,7 +29,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for id, product in order.items.items %}
+                    {% for inner_id, product in order.items.items %}
                     <tr>
                         <td class="product-thumbnail">
                             <img src="{{product.image.url}}" alt="Image" class="img-fluid">
@@ -43,8 +43,8 @@
                             {{product.amount}}
                         </td>
                         <td>{{product.price}}</td>
-                        {% if order.status == 'Доставлен' %}
-                        <td><a href="#" class="btn btn-primary btn-sm">Возврат</a></td>
+                        {% if order.status == 'Доставлен' and not product.return_made %}
+                        <td><a href="{% url 'create_return' id product.id %}" class="btn btn-primary btn-sm">Возврат</a></td>
                         {% endif %}
                     </tr>
                     {% endfor %}
@@ -52,7 +52,7 @@
                 </table>
                 {% if order.status != 'Доставлен' and order.status != 'Отменен' %}
                 <a href="{% url 'accept_order' id %}" class="btn btn-primary btn-sm">Заказ получен</a>
-                <a href="{% url 'cancel_order' id %}" class="btn btn-primary btn-sm">Отменить</a>
+                <a href="{% url 'cancel_order' id %}" class="btn btn-danger btn-sm">Отменить</a>
                 {% endif %}
             </div>
         </div>

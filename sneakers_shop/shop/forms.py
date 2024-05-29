@@ -99,6 +99,11 @@ class CheckoutForm(forms.ModelForm):
 
 
 class ReturnForm(forms.ModelForm):
+    reason = forms.CharField(
+        help_text='Причина возврата',
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control form-control-lg', 'placeholder': 'Причина возврата'}),
+    )
     class Meta:
         model = Return
-        fields = ['reason', 'date']
+        fields = ['reason']

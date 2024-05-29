@@ -79,12 +79,12 @@ class ProductInOrder(models.Model):
 
 class Return(models.Model):
     reason = models.TextField()
-    date = models.DateTimeField()
+    date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=7, choices=RETURN_STATUS, default='PENDING')
-    client = models.OneToOneField(Client, on_delete=models.DO_NOTHING)
-    manager = models.OneToOneField(Manager, on_delete=models.DO_NOTHING)
-    order = models.OneToOneField(Order, on_delete=models.DO_NOTHING)
-    product = models.OneToOneField(Product, on_delete=models.DO_NOTHING)
+    client = models.ForeignKey(Client, on_delete=models.DO_NOTHING)
+    manager = models.ForeignKey(Manager, on_delete=models.DO_NOTHING)
+    order = models.ForeignKey(Order, on_delete=models.DO_NOTHING)
+    product = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
 
     def __str__(self):
         return f'Возврат №{self.pk}'

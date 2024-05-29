@@ -152,7 +152,12 @@ def order_status(request):
     for order in orders:
         manager = Manager.objects.get(id=order.manager_id)
         manager_str = manager.user.first_name + ' ' + manager.user.last_name + ', Телефон: ' + manager.phone
-        order_set[order.id] = {'items': get_order_items(order), 'manager': manager_str, 'date': order.delivery_date, 'status': get_delivery_status(order.delivery_status)}
+        order_set[order.id] = {
+            'items': get_order_items(order),
+            'manager': manager_str,
+            'date': order.delivery_date,
+            'status': get_delivery_status(order.delivery_status)
+        }
     context = {
         'title': 'Статус заказа',
         'orders': order_set,
@@ -192,7 +197,8 @@ def get_order_items(order):
             'amount': amount,
             'total_price': product.price * amount,
             'image': product.image,
-            'size': product.size
+            'size': product.size,
+            'return_made': Return.objects.filter(order_id=order.id, product_id=product.id).exists()
         }
     return result_order
 
@@ -230,28 +236,70 @@ def checkout(request):
 
 
 @login_required(login_url='sign_in')
-def return_order(request):
+def return_order(request, order_id, product_id):
     if request.method == 'POST':
         form = ReturnForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('return_status')
+            return_obj = Return.objects.create(client_id=Client.objects.get(user_id=request.user.id).id, order_id=order_id, product_id=product_id, reason=form.cleaned_data['reason'], manager_id=get_random_manager().id)
+            return_obj.save()
+            return redirect('returns')
     else:
         form = ReturnForm()
     context = {
         'title': 'Возврат',
         'form': form,
+        'product_id': product_id,
+        'order_id': order_id
     }
     return render(request, 'shop/return.html', context)
 
 
 @login_required(login_url='sign_in')
 def return_status(request):
+    returns = Return.objects.filter(client_id=Client.objects.get(user_id=request.user.id).id)
     context = {
         'title': 'Статус возврата',
+        'returns': get_returning_items(returns),
     }
     return render(request, 'shop/return_status.html', context)
 
+def get_returning_items(returning):
+    result_returning = {}
+    for return_obj in returning:
+        result_returning[return_obj.id] = {
+            'id': return_obj.product.id,
+            'name': return_obj.product.name,
+            'price': return_obj.product.price,
+            'image': return_obj.product.image,
+            'size': return_obj.product.size,
+            'reason': return_obj.reason,
+            'date': return_obj.date,
+            'manager': return_obj.manager,
+            'status': get_return_status(return_obj)
+        }
+    return result_returning
+
+def get_return_status(returning):
+    if returning.status == 'PENDING':
+        return 'В обработке'
+    elif returning.status == 'ACCEPT':
+        return 'Принят'
+    elif returning.status == 'DECLINE':
+        return 'Отменен'
+
+@login_required(login_url='sign_in')
+def accept_return(request, return_id):
+    return_obj = Return.objects.get(id=return_id)
+    return_obj.status = RETURN_STATUS[1][0]
+    return_obj.save()
+    return redirect('returns')
+
+@login_required(login_url='sign_in')
+def cancel_return(request, return_id):
+    return_obj = Return.objects.get(id=return_id)
+    return_obj.status = RETURN_STATUS[2][0]
+    return_obj.save()
+    return redirect('returns')
 
 @login_required(login_url='sign_in')
 def cart(request):

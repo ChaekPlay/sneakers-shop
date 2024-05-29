@@ -1,5 +1,10 @@
 {% extends 'shop/base.html' %}
 
 {% block content %}
-<h1>Возврат</h1>
+<h1>Возврат товара</h1>
+<form action="{% url 'create_return' order_id product_id %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-sm btn-primary">Оформить возврат</button>
+</form>
 {% endblock %}

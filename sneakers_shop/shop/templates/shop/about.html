@@ -1,10 +1,13 @@
 {% extends 'shop/base.html' %}
-
+{% load static %}
+{% block extracss %}
+<link rel="stylesheet" href="{% static 'shop/css/about.css' %}">
+{% endblock %}
 {% block content %}
-<p>
-    <h1>О нас</h1>
-    <p>
+<div class="about">
+    <h1 class="mb-3 text-dark">О нас</h1>
+    <p class="mb-3 text-dark">
         Проект создан в учебных целях для предмета "Базы данных"
     </p>
-</p>
+</div>
 {% endblock %}

@@ -16,8 +16,10 @@ from shop.models import *
 
 
 def index(request):
+    products = Product.objects.all()[:5]
     context = {
         'title': 'Главная страница',
+        'products': products,
     }
     return render(request, 'shop/index.html', context)
 
@@ -95,7 +97,7 @@ class LoginUser(LoginView):
 
 
 class Search(ListView):
-    paginate_by = 1
+    paginate_by = 9
     model = Product
     template_name = 'shop/search.html'
     context_object_name = 'products'
@@ -188,7 +190,9 @@ def get_delivery_status(status):
         return 'Отменен'
 def get_order_items(order):
     result_order = {}
+
     for product in order.products.select_related():
+        product_in_return = Return.objects.filter(order_id=order.id, product_id=product.id)
         amount = ProductInOrder.objects.filter(order_id=order.id, product_id=product.id).first().product_count
         result_order[product.id] = {
             'id': product.id,
@@ -198,7 +202,7 @@ def get_order_items(order):
             'total_price': product.price * amount,
             'image': product.image,
             'size': product.size,
-            'return_made': Return.objects.filter(order_id=order.id, product_id=product.id).exists()
+            'return_made': product_in_return.exists()
         }
     return result_order
 
@@ -286,6 +290,8 @@ def get_return_status(returning):
         return 'Принят'
     elif returning.status == 'DECLINE':
         return 'Отменен'
+    else:
+        return 'Ошибка'
 
 @login_required(login_url='sign_in')
 def accept_return(request, return_id):

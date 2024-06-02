@@ -71,12 +71,35 @@ class LoginUserForm(AuthenticationForm):
 
 
 class EditUserForm(forms.ModelForm):
+    first_name = forms.CharField(
+        max_length=100,
+        required=True,
+        help_text='Имя',
+        widget=forms.TextInput(attrs={'class': 'form-control form-control-lg', 'placeholder': 'Имя'}),
+    )
+    last_name = forms.CharField(
+        max_length=100,
+        required=True,
+        help_text='Фамилия',
+        widget=forms.TextInput(attrs={'class': 'form-control form-control-lg', 'placeholder': 'Фамилия'}),
+    )
+    email = forms.EmailField(
+        max_length=100,
+        required=True,
+        help_text='Адрес электронной почты',
+        widget=forms.TextInput(
+            attrs={'class': 'form-control form-control-lg', 'placeholder': 'Адрес электронной почты'}),
+    )
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email']
 
 
 class EditProfileForm(forms.ModelForm):
+    phone = forms.CharField(max_length=20,
+                             required=True,
+                             help_text='Номер телефона',
+                             widget=forms.TextInput(attrs={'class': 'form-control form-control-lg', 'placeholder': 'Номер телефона'}))
     class Meta:
         model = Client
         fields = ['phone']
@@ -102,7 +125,7 @@ class ReturnForm(forms.ModelForm):
     reason = forms.CharField(
         help_text='Причина возврата',
         required=True,
-        widget=forms.TextInput(attrs={'class': 'form-control form-control-lg', 'placeholder': 'Причина возврата'}),
+        widget=forms.Textarea(attrs={'class': 'form-control form-control-lg', 'placeholder': 'Причина возврата'}),
     )
     class Meta:
         model = Return

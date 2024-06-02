@@ -1,10 +1,17 @@
 {% extends 'shop/base.html' %}
 
+{% load static %}
+{% block extracss %}
+<link rel="stylesheet" href="{% static 'shop/css/return.css' %}">
+{% endblock %}
 {% block content %}
-<h1>Возврат товара</h1>
-<form action="{% url 'create_return' order_id product_id %}" method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-sm btn-primary">Оформить возврат</button>
-</form>
+<div class="return">
+    <h1>Возврат товара</h1>
+    <form action="{% url 'create_return' order_id product_id %}" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-sm btn-primary">Оформить возврат</button>
+    </form>
+</div>
+
 {% endblock %}

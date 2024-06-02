@@ -10,10 +10,7 @@
           <div class="col-md-5 text-center text-md-left pt-5 pt-md-0">
             <h1 class="mb-2">Найдите свои идеальные кроссовки</h1>
             <div class="intro-text text-center text-md-left">
-              <p class="mb-4">Обновленная модель культовых кед, выпущенных в 70-х годах, — эффектное завершение твоего образа. </p>
-              <p>
-                <a href="#" class="btn btn-sm btn-primary">Купить сейчас</a>
-              </p>
+              <p class="mb-4">Новая коллекция обуви с доставкой по всей России</p>
             </div>
           </div>
         </div>
@@ -54,45 +51,6 @@
       </div>
     </div>
 
-    <div class="site-section site-blocks-2">
-      <div class="container">
-        <div class="row">
-          <div class="col-sm-6 col-md-6 col-lg-4 mb-4 mb-lg-0" data-aos="fade" data-aos-delay="">
-            <a class="block-2-item" href="#">
-              <figure class="image">
-                <img src="{% static 'shop/images/woman1.jpg' %}" alt="" class="img-fluid">
-              </figure>
-              <div class="text">
-                <span class="text-uppercase">Коллекции</span>
-                <h3>Женщинам</h3>
-              </div>
-            </a>
-          </div>
-          <div class="col-sm-6 col-md-6 col-lg-4 mb-5 mb-lg-0" data-aos="fade" data-aos-delay="100">
-            <a class="block-2-item" href="#">
-              <figure class="image">
-                <img src="{% static 'shop/images/child1.jpg' %}" alt="" class="img-fluid">
-              </figure>
-              <div class="text">
-                <span class="text-uppercase">Коллекции</span>
-                <h3>Детям</h3>
-              </div>
-            </a>
-          </div>
-          <div class="col-sm-6 col-md-6 col-lg-4 mb-5 mb-lg-0" data-aos="fade" data-aos-delay="200">
-            <a class="block-2-item" href="#">
-              <figure class="image">
-                <img src="{% static 'shop/images/man1.jpg' %}" alt="" class="img-fluid">
-              </figure>
-              <div class="text">
-                <span class="text-uppercase">Коллекции</span>
-                <h3>Мужчинам</h3>
-              </div>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <div class="site-section block-3 site-blocks-2 bg-light">
       <div class="container">
@@ -104,66 +62,19 @@
         <div class="row">
           <div class="col-md-12">
             <div class="nonloop-block-3 owl-carousel">
+              {% for product in products %}
               <div class="item">
                 <div class="block-4 text-center">
                   <figure class="block-4-image">
-                    <img src="{% static 'shop/images/Sneakers1.jpg' %}" alt="Image placeholder" class="img-fluid">
+                    <img src="{{product.image.url}}" alt="Image placeholder" class="img-fluid">
                   </figure>
                   <div class="block-4-text p-4">
-                    <h3><a href="#">Кроссовки мужские Pulse</a></h3>
-                    <p class="mb-0">Самые практичные</p>
-                    <p class="text-primary font-weight-bold">5000 RUB</p>
+                    <h3><a href="#">{{product.name}}</a></h3>
+                    <p class="text-primary font-weight-bold">{{product.price}} RUB</p>
                   </div>
                 </div>
               </div>
-              <div class="item">
-                <div class="block-4 text-center">
-                  <figure class="block-4-image">
-                    <img src="{% static 'shop/images/Sneakers2.jpg' %}" alt="Image placeholder" class="img-fluid">
-                  </figure>
-                  <div class="block-4-text p-4">
-                    <h3><a href="#">Кроссовки женские Pulse</a></h3>
-                    <p class="mb-0">Самые удобные</p>
-                    <p class="text-primary font-weight-bold">2000 RUB</p>
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="block-4 text-center">
-                  <figure class="block-4-image">
-                    <img src="{% static 'shop/images/Sneakers3.jpg' %}" alt="Image placeholder" class="img-fluid">
-                  </figure>
-                  <div class="block-4-text p-4">
-                    <h3><a href="#">Туфли летние женские QUATTROCOMFORTO </a></h3>
-                    <p class="mb-0">Неповторимые</p>
-                    <p class="text-primary font-weight-bold">3000 RUB</p>
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="block-4 text-center">
-                  <figure class="block-4-image">
-                    <img src="{% static 'shop/images/Sneakers4.jpg' %}" alt="Image placeholder" class="img-fluid">
-                  </figure>
-                  <div class="block-4-text p-4">
-                    <h3><a href="#">Слипоны женские Pulse</a></h3>
-                    <p class="mb-0">Выбор многих</p>
-                    <p class="text-primary font-weight-bold">3200 RUB</p>
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="block-4 text-center">
-                  <figure class="block-4-image">
-                    <img src="{% static 'shop/images/Sneakers5.jpg' %}" alt="Image placeholder" class="img-fluid">
-                  </figure>
-                  <div class="block-4-text p-4">
-                    <h3><a href="#">Corater</a></h3>
-                    <p class="mb-0">Сандалии женские Rieker</p>
-                    <p class="text-primary font-weight-bold">1900 RUB</p>
-                  </div>
-                </div>
-              </div>
+              {% endfor %}
             </div>
           </div>
         </div>

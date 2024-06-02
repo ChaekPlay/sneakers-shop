@@ -11,36 +11,13 @@
 
     <div class="site-section">
       <div class="container">
-
+        <form action="{% url 'search' %}", method="get">
         <div class="row mb-5">
           <div class="col-md-9 order-2">
 
             <div class="row">
               <div class="col-md-12 mb-5">
                 <div class="float-md-left mb-4"><h2 class="text-black h5">Результаты поиска{% if query %}: "{{query}}"{% endif %}</h2></div>
-                <div class="d-flex">
-                  <div class="dropdown mr-1 ml-md-auto">
-                    <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" id="dropdownMenuOffset" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Последнее
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuOffset">
-                      <a class="dropdown-item" href="#">Мужчины</a>
-                      <a class="dropdown-item" href="#">Женщины</a>
-                      <a class="dropdown-item" href="#">Дети</a>
-                    </div>
-                  </div>
-                  <div class="btn-group">
-                    <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" id="dropdownMenuReference" data-toggle="dropdown"> Фильтр</button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuReference">
-                      <a class="dropdown-item" href="#">По релевантности</a>
-                      <a class="dropdown-item" href="#">По названию, A до Z</a>
-                      <a class="dropdown-item" href="#">По названию, Z до A</a>
-                      <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="#">По цене, от низкой до высокой</a>
-                      <a class="dropdown-item" href="#">По цене, от высокой до низкой</a>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
             <div class="row mb-5">
@@ -63,7 +40,7 @@
                 <div class="site-block-27">
                   <ul>
                     {% for page in paginator.page_range %}
-                    <li class="{% if page == paginator.number %}active{% endif %}"><a href="?page={{page}}">{{page}}</a></li>
+                    <li class="{% if page == paginator.number %}active{% endif %}"><button type="submit" class="btn" value="{{page}}" name="page">{{page}}</button></li>
                     {% endfor %}
                   </ul>
                 </div>
@@ -72,40 +49,20 @@
           </div>
 
           <div class="col-md-3 order-1 mb-5 mb-md-0">
-            <div class="border p-4 rounded mb-4">
-              <h3 class="mb-3 h6 text-uppercase text-black d-block">Категории</h3>
-              <ul class="list-unstyled mb-0">
-                <li class="mb-1"><a href="#" class="d-flex"><span>Мужчины</span> <span class="text-black ml-auto">(2,220)</span></a></li>
-                <li class="mb-1"><a href="#" class="d-flex"><span>Женщины</span> <span class="text-black ml-auto">(2,550)</span></a></li>
-                <li class="mb-1"><a href="#" class="d-flex"><span>Дети</span> <span class="text-black ml-auto">(2,124)</span></a></li>
-              </ul>
-            </div>
 
             <div class="border p-4 rounded mb-4">
               <div class="mb-4">
-                <h3 class="mb-3 h6 text-uppercase text-black d-block">Фильтр по цене</h3>
-                <div id="slider-range" class="border-primary"></div>
-                <input type="text" name="text" id="amount" class="form-control border-0 pl-0 bg-white" disabled="" />
+                <input type="text" name="q" class="form-control" placeholder="Поиск" {% if query %}value="{{query}}" {% endif %}>
+                <h3 class="mb-3 mt-3 h6 text-uppercase text-black d-block">Фильтр по цене</h3>
+                <input type="number" min="0" step="1" value="0" max="999999" id="id_min_price" name="min_price" class="form-control" placeholder="Мин. цена">
+                <input type="number" min="0" step="1" value="999999" id="id_max_price" name="max_price" class="form-control" placeholder="Макс. цена">
               </div>
-
-              <div class="mb-4">
-                <h3 class="mb-3 h6 text-uppercase text-black d-block">Размер</h3>
-                <label for="s_sm" class="d-flex">
-                  <input type="checkbox" id="s_sm" class="mr-2 mt-1"> <span class="text-black">44 (2,319)</span>
-                </label>
-                <label for="s_md" class="d-flex">
-                  <input type="checkbox" id="s_md" class="mr-2 mt-1"> <span class="text-black">45 (1,282)</span>
-                </label>
-                <label for="s_lg" class="d-flex">
-                  <input type="checkbox" id="s_lg" class="mr-2 mt-1"> <span class="text-black">46 (1,392)</span>
-                </label>
-              </div>
-
-            </div>
+              <button type="submit" class="btn btn-primary btn-md btn-block">Применить</button>
           </div>
         </div>
 
       </div>
+        </form>
     </div>
 
 

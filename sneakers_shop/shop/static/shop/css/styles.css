@@ -1,17 +1,6 @@
 @import url(./colors.css);
 @import url(./fonts.css);
-@import url(./aos.css.css);
-@import url(./navbar.css);
-@import url(./social.css);
-@import url(./profile.css);
 
 .view {
     min-height: 75vh;
-}
-body {
-	height: 100vh;
-	margin: 0;
-	padding: 0;
-	background: linear-gradient(120deg, #fff 75%, #e01533 25%);
-	font-family: 'PT Sans', sans-serif;
 }

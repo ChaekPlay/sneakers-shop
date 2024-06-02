@@ -22,6 +22,7 @@
                         <th class="product-name">Продукт</th>
                         <th class="product-size">Размер</th>
                         <th class="product-price">Цена</th>
+                        <th class="reason">Причина</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -34,10 +35,11 @@
                         </td>
                         <td>{{return_obj.size}}</td>
                         <td>{{return_obj.price}} RUB</td>
+                        <td>{{return_obj.reason}}</td>
                     </tr>
                     </tbody>
                 </table>
-                {% if order.status == 'В обработке' %}
+                {% if return_obj.status == "В обработке" %}
                 <a href="{% url 'accept_return' id %}" class="btn btn-primary btn-sm">Возврат осуществлен</a>
                 <a href="{% url 'cancel_return' id %}" class="btn btn-danger btn-sm">Отказаться от возврата</a>
                 {% endif %}

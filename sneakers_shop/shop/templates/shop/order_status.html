@@ -42,7 +42,7 @@
                         <td class="product-name">
                             {{product.amount}}
                         </td>
-                        <td>{{product.price}}</td>
+                        <td>{{product.total_price}} RUB</td>
                         {% if order.status == 'Доставлен' and not product.return_made %}
                         <td><a href="{% url 'create_return' id product.id %}" class="btn btn-primary btn-sm">Возврат</a></td>
                         {% endif %}
